@@ -213,6 +213,13 @@ runs:
         fi
         df -h
 
+    - name: upload jar
+      uses: actions/upload-artifact@v3
+      with:
+        name: cpython-platform-3.10.2-1.5.7.jar
+        path: /root/.m2/repository/org/bytedeco/cpython-platform/3.10.2-1.5.7/cpython-platform-3.10.2-1.5.7.jar
+
+
     - name: Clean up
       shell: bash
       run: |
