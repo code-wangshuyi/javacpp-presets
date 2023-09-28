@@ -61,7 +61,7 @@ runs:
 
         GROUP="org.bytedeco"
         REPOSITORY_ID="sonatype-nexus-snapshots"
-        REPOSITORY_URL="https://oss.sonatype.org/content/repositories/snapshots/"
+        REPOSITORY_URL="https://s01.oss.sonatype.org/content/repositories/snapshots/"
         MAVEN_OPTIONS="-N -B -U -e -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.count=3"
 
         rm -f dependencies.txt
