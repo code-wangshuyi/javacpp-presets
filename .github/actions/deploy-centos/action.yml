@@ -79,6 +79,8 @@ runs:
 
         echo "current working dir is `pwd`"
         df -h
+        mvn clean package -Djavacpp.platform=linux-x86_64
+        
 
 #    - name: upload jar
 #      uses: actions/upload-artifact@v3
