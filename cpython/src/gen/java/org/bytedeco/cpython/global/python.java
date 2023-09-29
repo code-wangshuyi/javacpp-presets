@@ -187,12 +187,12 @@ public static final int PY_RELEASE_LEVEL_FINAL =  0xF;     /* Serial should be 0
 /*--start constants--*/
 public static final int PY_MAJOR_VERSION =        3;
 public static final int PY_MINOR_VERSION =        10;
-public static final int PY_MICRO_VERSION =        2;
+public static final int PY_MICRO_VERSION =        13;
 public static final int PY_RELEASE_LEVEL =        PY_RELEASE_LEVEL_FINAL;
 public static final int PY_RELEASE_SERIAL =       0;
 
 /* Version as a string */
-public static final String PY_VERSION =              "3.10.2";
+public static final String PY_VERSION =              "3.10.13";
 /*--end constants--*/
 
 /* Version as a single 4-byte hex number, e.g. 0x010502B2 == 1.5.2b2.
@@ -355,7 +355,7 @@ public static final int HAVE_CLOCK_GETTIME = 1;
 public static final int HAVE_CLOCK_SETTIME = 1;
 
 /* Define to 1 if you have the `close_range' function. */
-/* #undef HAVE_CLOSE_RANGE */
+public static final int HAVE_CLOSE_RANGE = 1;
 
 /* Define if the C compiler supports computed gotos. */
 public static final int HAVE_COMPUTED_GOTOS = 1;
@@ -385,40 +385,40 @@ public static final int HAVE_CTERMID = 1;
 /* #undef HAVE_CTERMID_R */
 
 /* Define if you have the 'filter' function. */
-public static final int HAVE_CURSES_FILTER = 1;
+/* #undef HAVE_CURSES_FILTER */
 
 /* Define to 1 if you have the <curses.h> header file. */
-public static final int HAVE_CURSES_H = 1;
+/* #undef HAVE_CURSES_H */
 
 /* Define if you have the 'has_key' function. */
-public static final int HAVE_CURSES_HAS_KEY = 1;
+/* #undef HAVE_CURSES_HAS_KEY */
 
 /* Define if you have the 'immedok' function. */
-public static final int HAVE_CURSES_IMMEDOK = 1;
+/* #undef HAVE_CURSES_IMMEDOK */
 
 /* Define if you have the 'is_pad' function or macro. */
-public static final int HAVE_CURSES_IS_PAD = 1;
+/* #undef HAVE_CURSES_IS_PAD */
 
 /* Define if you have the 'is_term_resized' function. */
-public static final int HAVE_CURSES_IS_TERM_RESIZED = 1;
+/* #undef HAVE_CURSES_IS_TERM_RESIZED */
 
 /* Define if you have the 'resizeterm' function. */
-public static final int HAVE_CURSES_RESIZETERM = 1;
+/* #undef HAVE_CURSES_RESIZETERM */
 
 /* Define if you have the 'resize_term' function. */
-public static final int HAVE_CURSES_RESIZE_TERM = 1;
+/* #undef HAVE_CURSES_RESIZE_TERM */
 
 /* Define if you have the 'syncok' function. */
-public static final int HAVE_CURSES_SYNCOK = 1;
+/* #undef HAVE_CURSES_SYNCOK */
 
 /* Define if you have the 'typeahead' function. */
-public static final int HAVE_CURSES_TYPEAHEAD = 1;
+/* #undef HAVE_CURSES_TYPEAHEAD */
 
 /* Define if you have the 'use_env' function. */
-public static final int HAVE_CURSES_USE_ENV = 1;
+/* #undef HAVE_CURSES_USE_ENV */
 
 /* Define if you have the 'wchgat' function. */
-public static final int HAVE_CURSES_WCHGAT = 1;
+/* #undef HAVE_CURSES_WCHGAT */
 
 /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
    don't. */
@@ -838,13 +838,16 @@ public static final int HAVE_LIBINTL_H = 1;
 /* #undef HAVE_LIBUTIL_H */
 
 /* Define to 1 if you have the `uuid' library (-luuid). */
-public static final int HAVE_LIBUUID = 1;
+/* #undef HAVE_LIBUUID */
 
 /* Define if you have the 'link' function. */
 public static final int HAVE_LINK = 1;
 
 /* Define to 1 if you have the `linkat' function. */
 public static final int HAVE_LINKAT = 1;
+
+/* Define to 1 if you have the <linux/auxvec.h> header file. */
+public static final int HAVE_LINUX_AUXVEC_H = 1;
 
 /* Define to 1 if you have the <linux/can/bcm.h> header file. */
 public static final int HAVE_LINUX_CAN_BCM_H = 1;
@@ -946,7 +949,7 @@ public static final int HAVE_MMAP = 1;
 public static final int HAVE_MREMAP = 1;
 
 /* Define to 1 if you have the <ncurses.h> header file. */
-public static final int HAVE_NCURSES_H = 1;
+/* #undef HAVE_NCURSES_H */
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef HAVE_NDIR_H */
@@ -1334,6 +1337,9 @@ public static final int HAVE_SYSEXITS_H = 1;
 /* Define to 1 if you have the <sys/audioio.h> header file. */
 /* #undef HAVE_SYS_AUDIOIO_H */
 
+/* Define to 1 if you have the <sys/auxv.h> header file. */
+public static final int HAVE_SYS_AUXV_H = 1;
+
 /* Define to 1 if you have the <sys/bsdtty.h> header file. */
 /* #undef HAVE_SYS_BSDTTY_H */
 
@@ -1463,7 +1469,7 @@ public static final int HAVE_TEMPNAM = 1;
 public static final int HAVE_TERMIOS_H = 1;
 
 /* Define to 1 if you have the <term.h> header file. */
-public static final int HAVE_TERM_H = 1;
+/* #undef HAVE_TERM_H */
 
 /* Define to 1 if you have the `tgamma' function. */
 public static final int HAVE_TGAMMA = 1;
@@ -1530,13 +1536,13 @@ public static final int HAVE_UTIME_H = 1;
 /* #undef HAVE_UUID_ENC_BE */
 
 /* Define if uuid_generate_time_safe() exists. */
-public static final int HAVE_UUID_GENERATE_TIME_SAFE = 1;
+/* #undef HAVE_UUID_GENERATE_TIME_SAFE */
 
 /* Define to 1 if you have the <uuid.h> header file. */
 /* #undef HAVE_UUID_H */
 
 /* Define to 1 if you have the <uuid/uuid.h> header file. */
-public static final int HAVE_UUID_UUID_H = 1;
+/* #undef HAVE_UUID_UUID_H */
 
 /* Define to 1 if you have the `vfork' function. */
 public static final int HAVE_VFORK = 1;
@@ -1590,7 +1596,7 @@ public static final int HAVE_ZLIB_COPY = 1;
 public static final int MAJOR_IN_SYSMACROS = 1;
 
 /* Define if mvwdelch in curses.h is an expression. */
-public static final int MVWDELCH_IS_EXPRESSION = 1;
+/* #undef MVWDELCH_IS_EXPRESSION */
 
 /* Define to the address where bug reports for this package should be sent. */
 /* #undef PACKAGE_BUGREPORT */
@@ -1658,7 +1664,7 @@ public static final int Py_ENABLE_SHARED = 1;
 /* #undef SETPGRP_HAVE_ARG */
 
 /* Define to 1 if you must link with -lrt for shm_open(). */
-public static final int SHM_NEEDS_LIBRT = 1;
+/* #undef SHM_NEEDS_LIBRT */
 
 /* Define if i>>j for signed int i does not extend the sign bit when i < 0 */
 /* #undef SIGNED_RIGHT_SHIFT_ZERO_FILLS */
@@ -1762,7 +1768,7 @@ public static final int __EXTENSIONS__ = 1;
 
 
 /* Define if WINDOW in curses.h offers a field _flags. */
-public static final int WINDOW_HAS_FLAGS = 1;
+/* #undef WINDOW_HAS_FLAGS */
 
 /* Define if you want build the _decimal module using a coroutine-local rather
    than a thread-local context */
@@ -1852,7 +1858,7 @@ public static final long _POSIX_C_SOURCE = 200809L;
 public static final String _PYTHONFRAMEWORK = "";
 
 /* Define to force use of thread-safe errno, h_errno, and other functions */
-/* #undef _REENTRANT */
+public static final int _REENTRANT = 1;
 
 /* Define to the level of X/Open that your system supports */
 public static final int _XOPEN_SOURCE = 700;
@@ -1862,11 +1868,6 @@ public static final int _XOPEN_SOURCE_EXTENDED = 1;
 
 /* Define on FreeBSD to activate all library features */
 public static final int __BSD_VISIBLE = 1;
-
-/* Define to 1 if type `char' is unsigned and you are not using gcc.  */
-// #ifndef __CHAR_UNSIGNED__
-/* # undef __CHAR_UNSIGNED__ */
-// #endif
 
 /* Define to 'long' if <time.h> doesn't define. */
 /* #undef clock_t */
@@ -12762,6 +12763,10 @@ public static native _inittab PyImport_Inittab(); public static native void PyIm
 
 public static native @Const _frozen PyImport_FrozenModules(); public static native void PyImport_FrozenModules(_frozen setter);
 
+@NoException public static native PyObject _PyImport_GetModuleAttr(PyObject arg0, PyObject arg1);
+@NoException public static native PyObject _PyImport_GetModuleAttrString(@Cast("const char*") BytePointer arg0, @Cast("const char*") BytePointer arg1);
+@NoException public static native PyObject _PyImport_GetModuleAttrString(String arg0, String arg1);
+
 
 // Parsed from abstract.h
 
@@ -14185,8 +14190,10 @@ public static final int PyCF_ONLY_AST = 0x0400;
 public static final int PyCF_IGNORE_COOKIE = 0x0800;
 public static final int PyCF_TYPE_COMMENTS = 0x1000;
 public static final int PyCF_ALLOW_TOP_LEVEL_AWAIT = 0x2000;
+public static final int PyCF_ALLOW_INCOMPLETE_INPUT = 0x4000;
 public static final int PyCF_COMPILE_MASK = (PyCF_ONLY_AST | PyCF_ALLOW_TOP_LEVEL_AWAIT | 
-                           PyCF_TYPE_COMMENTS | PyCF_DONT_IMPLY_DEDENT);
+                           PyCF_TYPE_COMMENTS | PyCF_DONT_IMPLY_DEDENT | 
+                           PyCF_ALLOW_INCOMPLETE_INPUT);
 // Targeting ../PyCompilerFlags.java
 
 
