@@ -5,6 +5,7 @@ runs:
     - name: Install environment
       shell: bash
       run: |
+        echo "current working dir is `pwd`"
         cd /root
 
         SCL_ENABLE="devtoolset-9"
@@ -39,129 +40,17 @@ runs:
         ln -sf /opt/apache-maven-3.6.3/bin/mvn /usr/bin/mvn
         ln -sf /opt/gradle-6.7.1/bin/gradle /usr/bin/gradle
 
-        python3 -m pip install gdown || python3 -m pip install gdown
-
-        if [[ $CI_DEPLOY_PLATFORM == android-* ]]; then
-          curl -LO https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
-          unzip -qq android-ndk-r21e-linux-x86_64.zip
-          ln -sf android-ndk-r21e android-ndk
-          export MAVEN_OPTIONS="-Djavacpp.platform.root=$(pwd)/android-ndk/ -Djava.library.path= -Djavacpp.platform.suffix=-clang"
-        fi
-
-        if [[ $CI_DEPLOY_PLATFORM == "linux-x86" ]]; then
-          rpm -qa | sed s/.x86_64$/.i686/ | xargs yum -q -y install
-          wget --no-directories --no-parent -r https://www.repo.cloudlinux.com/cloudlinux/$CENTOS_VERSION/sclo/devtoolset-9/i386/
-          rpm -i --force --nodeps *.rpm
-        fi
-
-        if [[ -n ${CI_DEPLOY_NEED_BAZEL:-} ]]; then
-          echo Installing Bazel
-          curl -LO https://github.com/bazelbuild/bazel/releases/download/0.25.3/bazel-0.25.3-installer-linux-x86_64.sh
-          bash bazel-0.25.3-installer-linux-x86_64.sh
-        fi
-
-        if [[ "$CI_DEPLOY_PLATFORM" == "linux-x86_64" ]] && [[ -n ${CI_DEPLOY_NEED_CUDA:-} ]]; then
-          echo Installing CUDA, cuDNN, etc
-          curl -LO https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda-repo-rhel7-11-6-local-11.6.0_510.39.01-1.x86_64.rpm
-          curl -LO https://developer.download.nvidia.com/compute/redist/cudnn/v8.3.2/local_installers/11.5/cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive.tar.xz
-          curl -LO https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/libnccl-2.11.4-1+cuda11.5.x86_64.rpm
-          curl -LO https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/libnccl-devel-2.11.4-1+cuda11.5.x86_64.rpm
-
-          rpm -i --force --ignorearch --nodeps cuda-repo-rhel7-11-6-local-11.6.0_510.39.01-1.x86_64.rpm libnccl*.rpm
-          pushd /var/cuda-repo-rhel7-11-6-local/; rpm -i --force --ignorearch --nodeps cuda*.rpm libc*.rpm libn*.rpm; rm *.rpm; popd
-          ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so
-          ln -sf /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/libnvidia-ml.so
-          tar -hxvf cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive.tar.xz --strip-components=1 -C /usr/local/cuda/
-          mv /usr/include/nccl* /usr/local/cuda/include/
-          mv /usr/local/cuda/lib/* /usr/lib64/libnccl* /usr/local/cuda/lib64/
-
-          # Work around issues with CUDA 10.2/11.x
-          mv /usr/include/cublas* /usr/include/nvblas* /usr/local/cuda/include/ || true
-          mv /usr/lib64/libcublas* /usr/lib64/libnvblas* /usr/local/cuda/lib64/ || true
-          for f in /usr/local/cuda/lib64/*.so.10; do ln -s $f $f.2; done
-          for f in /usr/local/cuda/lib64/*.so.10; do ln -s $f ${f:0:${#f}-1}1; done
-          ln -s libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.11.1
-          ln -s libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.11.2
-          ln -s libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.11.3
-          ln -s libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.11.4
-          ln -s libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.11.5
-          ln -s libcudart.so.11.0 /usr/local/cuda/lib64/libcudart.so.11.6
-          cp /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib64/libcuda.so
-          cp /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib64/libcuda.so.1
-          cp /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/lib64/libnvidia-ml.so
-          cp /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/lib64/libnvidia-ml.so.1
-
-          # Remove downloaded archives and unused libraries to avoid running out of disk space
-          rm -f *.rpm *.tgz *.txz *.tar.*
-          rm -f $(find /usr/local/cuda/ -name '*.a' -and -not -name libcudart_static.a -and -not -name libcudadevrt.a)
-        fi
-
-        if [[ "$CI_DEPLOY_MODULE" == "nvcodec" ]]; then
-          echo Installing NVIDIA Video Codec SDK
-          python3 -m gdown.cli https://drive.google.com/uc?id=1dh3P5JLUUe9EXE0GSJj6VDWYlr7W89dO
-          unzip Video_Codec_SDK_11.1.5.zip -d /usr/local
-          ln -sf /usr/local/Video_Codec_SDK_* /usr/local/videocodecsdk
-        fi
-
-        if [[ "$CI_DEPLOY_MODULE" == "tensorrt" ]]; then
-          echo Installing TensorRT
-          python3 -m gdown.cli https://drive.google.com/uc?id=1mWSoITLd2PvJFn71JkVug7Axo0NziWAf
-          tar -hxvf TensorRT-8.2.3.0.Linux.x86_64-gnu.cuda-11.4.cudnn8.2.tar.gz -C /usr/local/
-          ln -sf /usr/local/TensorRT* /usr/local/tensorrt
-        fi
-
-        if [[ "$CI_DEPLOY_MODULE" == "mkl" ]]; then
-          echo Installing MKL
-          curl -LO https://registrationcenter-download.intel.com/akdlm/irc_nas/18444/l_onemkl_p_2022.0.1.117_offline.sh
-          bash l_onemkl_p_2022.0.1.117_offline.sh -s -a -s --eula accept
-        fi
-
-        if [[ "$CI_DEPLOY_PLATFORM" == "linux-x86" ]] && [[ "$CI_DEPLOY_MODULE" == "flycapture" ]]; then
-          echo Installing FlyCapture i386
-          python3 -m gdown.cli https://drive.google.com/uc?id=1BOpSik1Fndagzjf4ykwzermt2qlTzsWI
-          tar -xzvf flycapture2-2.13.3.31-i386-pkg_xenial.tgz
-          find -name *.deb | while read f; do ar -xv $f; tar --totals -xf data.tar.xz -C /; done;
-        fi
-
-        if [[ "$CI_DEPLOY_PLATFORM" == "linux-x86_64" ]] && [[ "$CI_DEPLOY_MODULE" == "flycapture" ]]; then
-          echo Installing FlyCapture amd64
-          python3 -m gdown.cli https://drive.google.com/uc?id=1YtVjdnbQLZHX_ocQ6xAmiq6pjftuPOPd
-          tar -xzvf flycapture2-2.13.3.31-amd64-pkg_xenial.tgz
-          find -name *.deb | while read f; do ar -xv $f; tar --totals -xf data.tar.xz -C /; done;
-        fi
-
-        if [[ "$CI_DEPLOY_PLATFORM" == "linux-x86_64" ]] && [[ "$CI_DEPLOY_MODULE" == "spinnaker" ]]; then
-          echo Installing Spinnaker amd64
-          python3 -m gdown.cli https://drive.google.com/uc?id=1zr9k4x-NI3OkVMLCccSBY4VtR-16iAQG
-          tar -xzvf spinnaker-2.4.0.143-Ubuntu18.04-amd64-pkg.tar.gz
-          find -name *.deb | while read f; do ar -xv $f; tar --totals -xvf data.tar.xz -C /; done;
-        fi
-
         if [[ -n ${CI_DEPLOY_NEED_GCC:-} ]]; then
           rm -f /usr/lib/libgfortran.so.3* /usr/lib64/libgfortran.so.3* # not required for GCC 7+
         else
           rm -f /usr/lib/libgfortran.so.4* /usr/lib64/libgfortran.so.4* # remove library from GCC 7+
         fi
 
-        GRADLE_TASK=publishToMavenLocal
-        MAVEN_PHASE=install
-        if [[ -n ${CI_DEPLOY_USERNAME:-} ]] && [[ ! "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-          GRADLE_TASK=publish
-          MAVEN_PHASE=deploy
-          if [[ "${{ github.event.head_commit.message }}" == Release* ]] || [[ "${GITHUB_REF#refs/heads/}" == "release" ]]; then
-            python3 -m gdown.cli -q -O settings.tar.gz https://drive.google.com/uc?id=$CI_DEPLOY_SETTINGS
-            tar -xzf settings.tar.gz
-            MAVEN_OPTIONS="$MAVEN_OPTIONS -Dgpg.homedir=$(pwd)/.gnupg/ -DperformRelease -DstagingRepositoryId=$STAGING_REPOSITORY"
-          fi
-        fi
-        echo "GPG_PASSPHRASE=***" >> $GITHUB_ENV
-        echo "GRADLE_TASK=$GRADLE_TASK" >> $GITHUB_ENV
-        echo "MAVEN_PHASE=$MAVEN_PHASE" >> $GITHUB_ENV
-        echo "MAVEN_OPTIONS=$MAVEN_OPTIONS" >> $GITHUB_ENV
 
     - name: Build project
       shell: bash
       run: |
+        echo "current working dir is `pwd`"
         source scl_source enable $SCL_ENABLE || true
         git --version
         gcc --version
@@ -183,40 +72,34 @@ runs:
         echo "Fixing HOME to /root (was '$HOME')"
         export HOME=/root
 
-        if [[ -n ${CI_DEPLOY_NEED_GRADLE:-} ]]; then
-          echo Executing Gradle $GRADLE_TASK ${{ matrix.options }} $CI_DEPLOY_OPTIONS on $MAKEJ processors
-          export GRADLE_OPTIONS="-Dorg.gradle.jvmargs=-Xmx2048m -PjavacppPlatform=$CI_DEPLOY_PLATFORM -PjavacppPlatformExtension=${{ matrix.ext }} ${{ matrix.options }} $CI_DEPLOY_OPTIONS --info"
-          gradle clean build $GRADLE_OPTIONS -b $CI_DEPLOY_MODULE/build.gradle
-          echo Publishing only now to help avoid race conditions with Gradle
-          gradle $GRADLE_TASK $GRADLE_OPTIONS -b $CI_DEPLOY_MODULE/build.gradle --refresh-dependencies
-        else
-          mkdir -p $HOME/.m2
-          echo "<settings>" > $HOME/.m2/settings.xml
-          echo "<mirrors><mirror><id>google-maven-central</id><name>GCS Maven Central mirror</name><url>https://maven-central.storage-download.googleapis.com/maven2/</url><mirrorOf>central</mirrorOf></mirror></mirrors>" >> $HOME/.m2/settings.xml
-          echo "<servers><server><id>sonatype-nexus-snapshots</id><username>$CI_DEPLOY_USERNAME</username><password>$CI_DEPLOY_PASSWORD</password></server><server><id>sonatype-nexus-staging</id><username>$CI_DEPLOY_USERNAME</username><password>$CI_DEPLOY_PASSWORD</password></server></servers>" >> $HOME/.m2/settings.xml
-          echo "</settings>" >> $HOME/.m2/settings.xml
+#        mkdir -p $HOME/.m2
+#        echo "<settings>" > $HOME/.m2/settings.xml
+#        echo "<mirrors><mirror><id>google-maven-central</id><name>GCS Maven Central mirror</name><url>https://maven-central.storage-download.googleapis.com/maven2/</url><mirrorOf>central</mirrorOf></mirror></mirrors>" >> $HOME/.m2/settings.xml
+#        echo "<servers><server><id>sonatype-nexus-snapshots</id><username>$CI_DEPLOY_USERNAME</username><password>$CI_DEPLOY_PASSWORD</password></server><server><id>sonatype-nexus-staging</id><username>$CI_DEPLOY_USERNAME</username><password>$CI_DEPLOY_PASSWORD</password></server></servers>" >> $HOME/.m2/settings.xml
+#        echo "</settings>" >> $HOME/.m2/settings.xml
 
-          SECONDS=$(( RANDOM % 300 ))
-          echo Sleeping $SECONDS seconds to help avoid race conditions with Maven
-          sleep $SECONDS
+        SECONDS=$(( RANDOM % 300 ))
+        echo Sleeping $SECONDS seconds to help avoid race conditions with Maven
+        sleep $SECONDS
 
-          echo Executing Maven $MAVEN_PHASE $CI_DEPLOY_OPTIONS on $MAKEJ processors
-          export EXT=${{ matrix.ext }}
-          export EXT2=${EXT:1}
-          export MAVEN_OPTS="-Xss2m -Xmx4g"
-          export MAVEN_OPTIONS="clean $MAVEN_PHASE -B -U -e -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.count=3 -Djavacpp.platform=$CI_DEPLOY_PLATFORM -Djavacpp.platform.extension=$EXT $MAVEN_OPTIONS $CI_DEPLOY_OPTIONS"
-          for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -pl .,$CI_DEPLOY_MODULE && break || STATUS=$? && sleep 60; done; (exit $STATUS)
-          for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -f $CI_DEPLOY_MODULE/platform/$EXT2/pom.xml && break || STATUS=$? && sleep 60; done; (exit $STATUS)
-          if [[ -e $CI_DEPLOY_MODULE/platform/redist/pom.xml ]]; then
-            for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -f $CI_DEPLOY_MODULE/platform/redist/pom.xml && break || STATUS=$? && sleep 60; done; (exit $STATUS)
-          fi
-        fi
+#        echo Executing Maven $MAVEN_PHASE $CI_DEPLOY_OPTIONS on $MAKEJ processors
+#        export EXT=${{ matrix.ext }}
+#        export EXT2=${EXT:1}
+#        export MAVEN_OPTS="-Xss2m -Xmx4g"
+#        export MAVEN_OPTIONS="clean $MAVEN_PHASE -B -U -e -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.count=3 -Djavacpp.platform=$CI_DEPLOY_PLATFORM -Djavacpp.platform.extension=$EXT $MAVEN_OPTIONS $CI_DEPLOY_OPTIONS"
+#        for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -pl .,$CI_DEPLOY_MODULE && break || STATUS=$? && sleep 60; done; (exit $STATUS)
+#        for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -f $CI_DEPLOY_MODULE/platform/$EXT2/pom.xml && break || STATUS=$? && sleep 60; done; (exit $STATUS)
+#        if [[ -e $CI_DEPLOY_MODULE/platform/redist/pom.xml ]]; then
+#          for i in {1..5}; do STATUS=0; mvn $MAVEN_OPTIONS -f $CI_DEPLOY_MODULE/platform/redist/pom.xml && break || STATUS=$? && sleep 60; done; (exit $STATUS)
+#        fi
+        echo "current working dir is `pwd`"
         df -h
-    - name: upload jar
-      uses: actions/upload-artifact@v3
-      with:
-        name: cpython-platform-3.10.2-1.5.7.jar
-        path: /root/.m2/repository/org/bytedeco/cpython-platform/3.10.2-1.5.7/cpython-platform-3.10.2-1.5.7.jar
+
+#    - name: upload jar
+#      uses: actions/upload-artifact@v3
+#      with:
+#        name: cpython-platform-3.10.2-1.5.7.jar
+#        path: /root/.m2/repository/org/bytedeco/cpython-platform/3.10.2-1.5.7/cpython-platform-3.10.2-1.5.7.jar
 
     - name: Clean up
       shell: bash
