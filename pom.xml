@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.bytedeco</groupId>
+  <groupId>cn.wangshuyi</groupId>
   <artifactId>javacpp-presets</artifactId>
   <version>1.5.7</version>
   <packaging>pom</packaging>
@@ -44,14 +44,14 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
+      <id>ossrh</id>
       <name>Sonatype Nexus Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
     </snapshotRepository>
     <repository>
-      <id>sonatype-nexus-staging</id>
+      <id>ossrh</id>
       <name>Sonatype Nexus Staging</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
 
@@ -100,7 +100,7 @@
     <repository>
       <id>sonatype-nexus-snapshots</id>
       <name>Sonatype Nexus Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -113,7 +113,7 @@
     <pluginRepository>
       <id>sonatype-nexus-snapshots</id>
       <name>Sonatype Nexus Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -476,8 +476,8 @@
         <version>1.6.8</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>sonatype-nexus-staging</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
 <!--          <skipLocalStaging>true</skipLocalStaging> -->
           <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
         </configuration>
@@ -524,7 +524,7 @@
         <repository>
           <id>sonatype-nexus-staging</id>
           <name>Sonatype Nexus Staging</name>
-          <url>https://oss.sonatype.org/service/local/staging/deployByRepositoryId/${stagingRepositoryId}/</url>
+          <url>https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/${stagingRepositoryId}/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -537,7 +537,7 @@
         <pluginRepository>
           <id>sonatype-nexus-staging</id>
           <name>Sonatype Nexus Staging</name>
-          <url>https://oss.sonatype.org/service/local/staging/deployByRepositoryId/${stagingRepositoryId}/</url>
+          <url>https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/${stagingRepositoryId}/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -550,7 +550,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -561,7 +561,7 @@
               </execution>
             </executions>
             <configuration>
-              <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+              <passphrase>shuyi</passphrase>
               <useAgent>false</useAgent>
             </configuration>
           </plugin>
