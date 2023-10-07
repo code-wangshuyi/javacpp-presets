@@ -6,12 +6,13 @@
   <parent>
     <groupId>cn.wangshuyi</groupId>
     <artifactId>javacpp-presets</artifactId>
-    <version>1.5.7</version>
+    <version>1.5.7.1</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>cn.wangshuyi</groupId>
   <artifactId>cpython</artifactId>
-  <version>3.10.2-1.5.7</version>
+  <version>3.10.13-1.5.7.1</version>
   <name>JavaCPP Presets for CPython</name>
 
   <dependencies>

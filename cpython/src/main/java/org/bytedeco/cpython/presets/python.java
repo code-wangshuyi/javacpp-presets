@@ -210,7 +210,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
 )
 @NoException
 public class python implements InfoMapper {
-    static { Loader.checkVersion("org.bytedeco", "cpython"); }
+    static { Loader.checkVersion("cn.wangshuyi", "cpython"); }
 
     private static File packageFile = null;
 
